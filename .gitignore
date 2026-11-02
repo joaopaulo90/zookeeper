@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+.pytest_cache/
+config.local.toml
+# Test-run output (logs, certificates, screenshots) and the phone app build.
+runs/
+.build/

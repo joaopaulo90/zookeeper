@@ -1,0 +1,85 @@
+# The installer's side of setting up a unit, on zoo-mobile's test build.
+# Driven by suites/provisioning/test_ble_setup.py, which passes every ${VAR}.
+# Fields are found by their testID, buttons by their text.
+appId: br.com.chacaraourico.zoo.mobile.test
+name: Set up a unit over Bluetooth
+---
+- launchApp
+
+# Log in (test-mode zoo-server accepts a fixed code).
+- tapOn:
+    id: login-identifier
+- inputText: ${IDENTIFIER}
+- hideKeyboard
+- tapOn: Send code
+- tapOn:
+    id: verify-code
+- inputText: ${CODE}
+- hideKeyboard
+- tapOn: Verify
+- extendedWaitUntil:
+    visible: Set up a doorbell
+    timeout: 20000
+
+# Pick the unit by serial (the test build's stand-in for scanning its QR).
+- tapOn: Set up a doorbell
+- tapOn:
+    id: test-serial-input
+- inputText: ${SERIAL}
+- hideKeyboard
+- tapOn:
+    id: test-serial-submit
+
+# The app finds the unit over Bluetooth and checks its serial.
+- extendedWaitUntil:
+    visible: New unit found
+    timeout: 60000
+
+- tapOn:
+    id: site-name
+- inputText: ${SITE}
+- hideKeyboard
+- tapOn: Continue
+
+- extendedWaitUntil:
+    visible: House Wi-Fi
+    timeout: 10000
+- tapOn:
+    id: wifi-ssid
+- eraseText: 64
+- inputText: ${WIFI_SSID}
+- tapOn:
+    id: wifi-password
+- inputText: ${WIFI_PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element: Continue
+- tapOn: Continue
+
+- extendedWaitUntil:
+    visible: Display name
+    timeout: 10000
+- tapOn:
+    id: display-name
+- inputText: ${DISPLAY_NAME}
+- hideKeyboard
+- tapOn: Continue
+- waitForAnimationToEnd
+
+# Inside units only: the Group step.
+- runFlow:
+    when:
+      visible:
+        id: group-name
+    commands:
+      - tapOn:
+          id: group-name
+      - inputText: ${GROUP}
+      - hideKeyboard
+      - tapOn: Continue
+
+# Claim with zoo-server, send everything over Bluetooth, wait for the unit
+# to join the Wi-Fi (the slow part: 20+ seconds on a real unit).
+- extendedWaitUntil:
+    visible: Unit set up.
+    timeout: 150000
