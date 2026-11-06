@@ -82,5 +82,5 @@ def test_a_new_unit_is_set_up_over_ble_and_comes_online(config, zoo_server, brok
     # ...and the broker sees it: its retained status on its own topic.
     status = broker.wait_for_message(f"jiboia/test/{account}/{SITE}/{serial}/status", timeout=30)
     payload = status.json()
-    assert payload.get("deviceId") == serial
+    assert payload.get("device_id") == serial
     assert "phase" in payload, f"expected a live status, got {payload}"

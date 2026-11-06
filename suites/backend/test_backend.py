@@ -23,8 +23,8 @@ def test_an_identity_issued_by_test_zoo_server_is_accepted_by_the_broker(config,
     p12 = base64.b64decode(bundle["certificateP12Base64"])
     cert, key = p12_to_pem(p12, bundle["bundlePassword"], test_dir, "unit")
     topic = f"jiboia/test/{bundle['account']}/bench/{serial}/status"
-    broker.publish(topic, json.dumps({"deviceId": serial, "phase": "idle"}), cert, key)
+    broker.publish(topic, json.dumps({"device_id": serial, "phase": "idle"}), cert, key)
 
     message = broker.wait_for_message(topic, timeout=10)
-    assert message.json() == {"deviceId": serial, "phase": "idle"}
+    assert message.json() == {"device_id": serial, "phase": "idle"}
 

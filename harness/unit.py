@@ -157,4 +157,6 @@ def install_debug_app(adb: Adb, jiboia_repo: Path, role: str, java_home: str) ->
     if proc.returncode != 0:
         raise RuntimeError(f"jiboia build failed:\n{proc.stdout[-3000:]}{proc.stderr[-3000:]}")
     apk = jiboia_repo / f"app/build/outputs/apk/{role}/debug/app-{role}-debug.apk"
-    adb.run("install", "-r", str(apk), timeout=300)
+    # -g: grant every runtime permission now. A bench unit is often not
+    # Device Owner, so nothing else would grant ones added since (e.g. location).
+    adb.run("install", "-r", "-g", str(apk), timeout=300)
